@@ -7,6 +7,7 @@ class BuilderCourse {
     private duration: number=0;
     private college: string|undefined='123';
     private startTime: number = 15;
+    private name: string= 'test';
     constructor() {
     }
 
@@ -20,15 +21,22 @@ class BuilderCourse {
         return this;
     }
 
+    withName(name:string){
+        this.name=name;
+        return this;
+    }
+
     build(){
         const testTimer = new Timer();
         const fakeGetTime = jest.fn(() => this.startTime)
         testTimer.getTime = fakeGetTime;
+
         const testCollege = new College();
         const fakeGetEnv= jest.fn((): string | undefined => '');
-        testCollege.getName=fakeGetEnv;
+        testCollege.getName = fakeGetEnv;
         fakeGetEnv.mockReturnValue(this.college);
-        const course = new Course('macramé', testTimer,testCollege);
+
+        const course = new Course(this.name, testTimer,testCollege);
 
         course.start();
         fakeGetTime.mockReturnValue(this.duration+this.startTime);
@@ -37,6 +45,8 @@ class BuilderCourse {
         return course;
     }
 }
+const courseName = 'macramé';
+
 
 describe('Course', () => {
 
@@ -46,7 +56,8 @@ describe('Course', () => {
             .build();
 
 
-        expect(course.isShort()).toBeTruthy();
+        expect(course.isShort())
+            .toBe(true);
     });
 
     it('identifies long courses',()=>{
@@ -54,24 +65,27 @@ describe('Course', () => {
             .withDuration(10 * 60 * 60 * 1000)
             .build()
 
-        expect(longCourse.isLong()).toBeTruthy()
+        expect(longCourse.isLong())
+            .toBe(true)
     });
 
     it('knows the course title',()=>{
         const course = new BuilderCourse()
                 .withCollege('testCollege')
+                .withName(courseName)
                 .build();
 
         expect(course.getTitle())
-            .toBe('macramé course in testCollege college');
+            .toBe(`${courseName} course in testCollege college`);
     });
 
     it('knows the course title when college is undefined',()=>{
         const course = new BuilderCourse()
             .withCollege(undefined)
+            .withName(courseName)
             .build();
 
         expect(course.getTitle())
-            .toBe('macramé course in not found college');
+            .toBe(`${courseName} course in not found college`);
     });
 });

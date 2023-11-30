@@ -12,8 +12,8 @@ export class Course {
     public constructor(name: string, timer?: Timer, college?: College) {
         this.name = name;
         this.durationInMinutes = 0;
-        this.timer=timer|| new Timer();
-        this.college =  college ||  new College();
+        this.timer= timer|| new Timer();
+        this.college =  college || new College();
     }
     
     public start(): void {
