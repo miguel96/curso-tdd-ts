@@ -1,10 +1,3 @@
-import {env} from "process";
-
-export class College {
-    constructor() {
-    }
-
-    getName() {
-        return env.college;
-    }
+export interface College {
+    getName(): string|undefined;
 }

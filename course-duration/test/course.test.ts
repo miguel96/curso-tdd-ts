@@ -1,31 +1,38 @@
 import {Course} from "../src/course";
-import {Timer} from '../src/timer';
+import {Timer} from "../src/timer";
 import {College} from "../src/college";
 
-const aTimer = (startTime: number) =>{
-    const testTimer = new Timer();
-    const fakeGetTime = jest.fn(() => startTime)
-    testTimer.getTime = fakeGetTime;
-    return testTimer as Timer & {getTime: typeof fakeGetTime};
+class FakeTimer implements Timer {
+    private nextTime = 0;
+    constructor() {
+    }
+    getTime(): number {
+        return this.nextTime;
+    }
+    setNextTime(nextTime:number):void{
+        this.nextTime = nextTime
+    }
 }
 
-const aCollege = (college?: string) =>{
-    const testCollege = new College();
-    const fakeCollege= jest.fn((): string | undefined => '');
-    testCollege.getName = fakeCollege;
-    fakeCollege.mockReturnValue(college);
-    return testCollege as Timer & {getName: typeof fakeCollege};
+class FakeCollege implements College {
+    constructor(private readonly name :string|undefined) {
+    }
+
+    getName(): string | undefined {
+        return this.name;
+    }
 }
 
-const aCourse = (duration:number, college?:string,name:string='testName')=>{
+
+const aCourse = (duration:number, collegeName?:string,name:string='testName')=>{
     const startTime = 15;
-    const testTimer = aTimer(startTime);
-    const testCollege = aCollege(college)
+    const testTimer = new FakeTimer();
+    const testCollege = new FakeCollege(collegeName);
 
     const course = new Course(name, testTimer, testCollege);
-
+    testTimer.setNextTime(startTime);
     course.start();
-    testTimer.getTime.mockReturnValue(duration+startTime);
+    testTimer.setNextTime(duration+startTime)
     course.end();
 
     return course;

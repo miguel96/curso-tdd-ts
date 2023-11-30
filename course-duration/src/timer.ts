@@ -1,5 +1,3 @@
-export class Timer {
-    getTime() {
-        return Date.now();
-    }
+export interface Timer {
+    getTime():number;
 }

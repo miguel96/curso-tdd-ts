@@ -1,6 +1,7 @@
-import {Timer} from "./timer";
-
+import {SystemTimer} from "./systemTimer";
+import {CollegeEnv} from "./collegeEnv";
 import {College} from "./college";
+import {Timer} from "./timer";
 
 export class Course {
     private readonly name: string;
@@ -12,8 +13,8 @@ export class Course {
     public constructor(name: string, timer?: Timer, college?: College) {
         this.name = name;
         this.durationInMinutes = 0;
-        this.timer= timer|| new Timer();
-        this.college =  college || new College();
+        this.timer= timer|| new SystemTimer();
+        this.college =  college || new CollegeEnv();
     }
     
     public start(): void {
