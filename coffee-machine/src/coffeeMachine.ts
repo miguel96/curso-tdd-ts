@@ -3,23 +3,16 @@ export interface DrinkMaker {
     execute(command:string):void;
 }
 
-interface CoffeeMachineI {
- selectCoffee():void,
- selectTea():void,
- selectChocolate():void,
- addOneSpoonOfSugar():void,
- makeDrink():void,
-}
 
 export class CoffeeMachine {
     private drinkType: string;
     private spoonsOfSugar: number=0;
 
-    constructor(private readonly  drinkMaker: DrinkMaker) {
+    constructor(readonly  drinkMaker: DrinkMaker) {
     }
 
     selectTea(){
-        this.drinkType='T';
+        this.drinkType = 'T';
     }
 
     selectCoffee():void {
@@ -30,8 +23,15 @@ export class CoffeeMachine {
         this.drinkType = 'H';
     }
 
-    getCommand():string {
-       return `${this.drinkType}:${this.spoonsOfSugar||''}:${this.spoonsOfSugar?'0':''}`
+    private getCommand():string {
+       return this.sugarLimit()
+        || `${this.drinkType}:${this.spoonsOfSugar||''}:${this.spoonsOfSugar?'0':''}`
+    }
+
+    private sugarLimit() {
+        return this.spoonsOfSugar > 2
+            ? 'M:SUGAR_ERROR'
+            : false;
     }
 
     makeDrink(): void {

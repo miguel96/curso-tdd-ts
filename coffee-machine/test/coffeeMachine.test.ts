@@ -1,43 +1,61 @@
 import {CoffeeMachine,DrinkMaker} from "../src/coffeeMachine";
 
-class TestDrinkMaker implements DrinkMaker{
-  command: string;
-  execute(command: string) {
-    this.command=command;
-  }
-}
 
 describe('Coffee Machine', () => {
+  let testDrinkMaker: DrinkMaker;
+  let coffeeMachine: CoffeeMachine;
+  beforeEach(()=>{
+     testDrinkMaker = {
+      execute: jest.fn(),
+    }
+     coffeeMachine = new CoffeeMachine(testDrinkMaker);
+  })
 
   it('should serve chocolate', () => {
-    const testDrinkMaker = new TestDrinkMaker()
-    const coffeeMachine = new CoffeeMachine(testDrinkMaker);
     coffeeMachine.selectChocolate();
     coffeeMachine.makeDrink();
+    expect(testDrinkMaker.execute).toHaveBeenCalledWith('H::')
+  });
 
-    expect(testDrinkMaker.command).toBe('H::')
+  it('should serve tea', () => {
+    coffeeMachine.selectTea();
+    coffeeMachine.makeDrink();
+    expect(testDrinkMaker.execute).toHaveBeenCalledWith('T::')
+  });
+
+  it('should serve coffee', () => {
+    coffeeMachine.selectCoffee();
+    coffeeMachine.makeDrink();
+    expect(testDrinkMaker.execute).toHaveBeenCalledWith('C::')
   });
 
   it('should let add one spoon of sugar',()=>{
-    const testDrinkMaker = new TestDrinkMaker()
-    const coffeeMachine = new CoffeeMachine(testDrinkMaker);
 
     coffeeMachine.selectTea();
     coffeeMachine.addOneSpoonOfSugar();
     coffeeMachine.makeDrink();
 
-    expect(testDrinkMaker.command).toBe('T:1:0')
+    expect(testDrinkMaker.execute).toHaveBeenCalledWith(expect.stringMatching(':1:0'))
   });
 
   it('should let add two spoons of sugar',()=>{
-    const testDrinkMaker = new TestDrinkMaker()
-    const coffeeMachine = new CoffeeMachine(testDrinkMaker);
 
     coffeeMachine.selectCoffee();
     coffeeMachine.addOneSpoonOfSugar();
     coffeeMachine.addOneSpoonOfSugar();
     coffeeMachine.makeDrink();
 
-    expect(testDrinkMaker.command).toBe('C:2:0')
+    expect(testDrinkMaker.execute).toHaveBeenCalledWith(expect.stringMatching(':2:0'))
   });
+
+  it('should display an error message if there are more than 2 spoons of sugar',()=>{
+    coffeeMachine.selectCoffee();
+    coffeeMachine.addOneSpoonOfSugar();
+    coffeeMachine.addOneSpoonOfSugar();
+    coffeeMachine.addOneSpoonOfSugar();
+    coffeeMachine.makeDrink();
+
+    expect(testDrinkMaker.execute).toHaveBeenCalledWith(expect.stringMatching('M:SUGAR_ERROR'))
+  })
+
 });
