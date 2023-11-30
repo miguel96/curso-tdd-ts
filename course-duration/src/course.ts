@@ -1,22 +1,36 @@
-import {env} from "process";
+import {Timer} from "./timer";
+
+import {College} from "./college";
 
 export class Course {
     private readonly name: string;
     private startTime: number;
     private durationInMinutes: number;
+    private timer: Timer;
+    private college: College;
 
-    public constructor(name: string) {
+    public constructor(name: string, timer?: Timer, college?: College) {
         this.name = name;
         this.durationInMinutes = 0;
+        this.timer=timer|| new Timer();
+        this.college =  college ||  new College();
     }
     
     public start(): void {
-      this.startTime = Date.now();
+      this.startTime = this.getTime();
     }
-    
+
+    private getTime() {
+        return this.timer.getTime();
+    }
+
     public end(): void {
-        const endTime: number = Date.now();
-        this.durationInMinutes = (endTime - this.startTime) / (1000 * 60);
+        this.durationInMinutes = this.getDurationInMinutes();
+    }
+
+    private getDurationInMinutes() {
+        const endTime: number = this.getTime();
+        return (endTime - this.startTime) / (1000 * 60);
     }
 
     public isShort(): boolean {
@@ -33,8 +47,9 @@ export class Course {
     }
 
     private getCollege(): string {
-        return env.college ?? "not found";
+        return this.college.getName() ?? "not found";
     }
+
 }
 
 
